@@ -1,72 +1,102 @@
-# Group-4-responsible-ml-capstone
-Capstone project on fairness analysis and mitigation using the COMPAS dataset
-Responsible ML Capstone Project
-Overview
+# Responsible Machine Learning Capstone Project
 
-This project builds a machine learning model to predict mortgage approval using the 2024 HMDA dataset. The goal is not only to achieve good performance but also to evaluate fairness and potential risks in the model.
+## Overview
+This project presents an end-to-end Responsible Machine Learning audit using the 2024 Home Mortgage Disclosure Act (HMDA) Loan Application Register (LAR) dataset. The goal is not only to build predictive models for mortgage approval decisions, but also to evaluate fairness, reliability, explainability, and deployment risks in a real-world lending context.
 
-Dataset
-Source: 2024 HMDA Loan Data
-~150,000 records after cleaning
-Target:
-1 = Approved
-0 = Denied
+The project was completed for **DNSC 6330 – Responsible Machine Learning** at **George Washington University (Spring 2026)**.
 
-Protected attributes used for fairness analysis:
+---
 
-Race
-Sex
-Ethnicity
-Models
-Logistic Regression (baseline)
-Gradient Boosting (better performance)
+## Team Members
+- Surafel Debebe  
+- Xiaowei Cen  
+- Percy  
+- Suzy  
+- Ramin  
 
-Both models use preprocessing pipelines (imputation, encoding, scaling).
+---
 
-Results
-Logistic Regression AUC ≈ 0.88
-Gradient Boosting AUC ≈ 0.91
+## Dataset
+- **Source:** 2024 HMDA LAR dataset  
+- **Size Used:** 150,000 filtered records  
+- **Target Variable:**  
+  - Action Taken = 1 or 2 → Approved (1)  
+  - Action Taken = 3 → Denied (0)
 
-Gradient Boosting performs better.
+---
 
-Fairness Analysis
+## Project Objectives
+The project focuses on five major responsible ML questions:
 
-We evaluated fairness using:
+1. Optimization objective  
+2. Known failure modes  
+3. Subgroup fairness measurement  
+4. Bias mitigation and residual risk  
+5. Deployment defensibility  
 
-AIR (80% rule)
-ME (statistical difference)
-SMD (effect size)
-Key findings:
-Black applicants have lower approval rates
-Intersectional groups (e.g., Black female) are more affected
-Multiple groups were flagged for disparity
-Failure Modes
+---
 
-Main risks identified:
+## Models Used
+- Logistic Regression (interpretable baseline)
+- Gradient Boosting Classifier (higher-capacity model)
 
-Class imbalance (approval rate is high)
-Missing data impact
-Threshold sensitivity
-Temporal drift
-Mitigation
+---
 
-We applied threshold adjustment:
+## Methods
 
-Lower threshold improves fairness
-Group-specific thresholds improve results further
+### Data Processing
+- Missing value imputation
+- One-hot encoding for categorical variables
+- Feature scaling for numerical variables
+- Train/test split with reproducible random seed
 
-However:
+### Fairness Evaluation
+The project evaluates fairness across:
+- Race
+- Sex
+- Ethnicity
+- Race × Sex intersectional groups
 
-May increase false positives
-May raise legal concerns
-Deployment
-Logistic Regression → Conditional
-Gradient Boosting → Better performance
+Metrics used:
+- Adverse Impact Ratio (AIR)
+- Marginal Effect (ME)
+- Standardized Mean Difference (SMD)
 
-Group-specific thresholds are not recommended for deployment due to legal risk.
+---
 
-Conclusion
+## Explainability
+The notebook uses SHAP analysis to identify important features and potential proxy discrimination risks. Important proxy-related features such as loan purpose and loan type were reviewed during the audit.
 
-The model performs well but has fairness issues.
-Mitigation improves fairness, but trade-offs remain.
-Careful monitoring is required before deployment.
+---
+
+## Key Findings
+- Gradient Boosting achieved better predictive performance overall.
+- However, the Gradient Boosting model also showed stronger subgroup disparities.
+- Black female applicants under the GBT model had an AIR below the four-fifths threshold (0.7913), raising fairness concerns.
+- The project demonstrates that the model with the highest AUC is not always the most deployable or defensible model.
+
+---
+
+## Bias Mitigation
+Two mitigation policies were evaluated:
+- Global threshold adjustment
+- Group-specific threshold analysis
+
+The project concludes that fairness improvements must still satisfy governance and legal defensibility requirements before deployment.
+
+---
+
+## Technologies Used
+- Python
+- Pandas
+- NumPy
+- Scikit-learn
+- Matplotlib
+- SHAP
+- Google Colab
+
+
+## Conclusion
+This project demonstrates how responsible machine learning extends beyond model accuracy. A model must also be explainable, fair across subgroups, robust to failure modes, and defensible for real-world deployment decisions.
+
+
