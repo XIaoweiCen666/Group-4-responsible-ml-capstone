@@ -1,102 +1,178 @@
 # Responsible Machine Learning Capstone Project
 
-## Overview
-This project presents an end-to-end Responsible Machine Learning audit using the 2024 Home Mortgage Disclosure Act (HMDA) Loan Application Register (LAR) dataset. The goal is not only to build predictive models for mortgage approval decisions, but also to evaluate fairness, reliability, explainability, and deployment risks in a real-world lending context.
+2026 Spring — DNSC 6330 Responsible Machine Learning  
+George Washington University
 
-The project was completed for **DNSC 6330 – Responsible Machine Learning** at **George Washington University (Spring 2026)**.
+Team Members:
+- Surafel Debebe
+- Xiaowei Cen
+- Percy Rodriguez
+- Suzy Tseng
+- Ramin Gamzaev
 
 ---
 
-## Team Members
-- Surafel Debebe  
-- Xiaowei Cen  
-- Percy  
-- Suzy  
-- Ramin  
+## Project Overview
+
+This project implements an end-to-end Responsible Machine Learning audit using the 2024 Home Mortgage Disclosure Act (HMDA) Loan Application Register (LAR) dataset.
+
+The objective is not only to build predictive models for mortgage approval decisions, but also to evaluate whether those models are defensible under fairness, robustness, explainability, and deployment-governance standards.
+
+The project follows the capstone framework from DNSC 6330 and addresses:
+
+1. Optimization objective
+2. Known failure modes
+3. Subgroup fairness measurement
+4. Bias mitigation and residual risks
+5. Deployment defensibility
 
 ---
 
 ## Dataset
-- **Source:** 2024 HMDA LAR dataset  
-- **Size Used:** 150,000 filtered records  
-- **Target Variable:**  
-  - Action Taken = 1 or 2 → Approved (1)  
-  - Action Taken = 3 → Denied (0)
+
+Source:
+- 2024 HMDA Loan/Application Register (LAR)
+
+Filtering:
+- action_taken ∈ {1, 2, 3}
+
+Label Definition:
+- 1 and 2 → Approved (1)
+- 3 → Denied (0)
+
+Dataset size used:
+- ~150,000 rows
 
 ---
 
-## Project Objectives
-The project focuses on five major responsible ML questions:
+## Models
 
-1. Optimization objective  
-2. Known failure modes  
-3. Subgroup fairness measurement  
-4. Bias mitigation and residual risk  
-5. Deployment defensibility  
+Two models were evaluated:
 
----
+### Logistic Regression (LR)
+- Interpretable baseline model
 
-## Models Used
-- Logistic Regression (interpretable baseline)
-- Gradient Boosting Classifier (higher-capacity model)
+### Gradient Boosting Classifier (GBT)
+- Higher-capacity model with stronger predictive performance
 
 ---
 
-## Methods
+## Features
 
-### Data Processing
-- Missing value imputation
-- One-hot encoding for categorical variables
-- Feature scaling for numerical variables
-- Train/test split with reproducible random seed
+Example features include:
 
-### Fairness Evaluation
-The project evaluates fairness across:
-- Race
-- Sex
-- Ethnicity
-- Race × Sex intersectional groups
+- loan_amount
+- income
+- property_value
+- debt_to_income_ratio
+- loan_type
+- loan_purpose
+- occupancy_type
+- applicant_age
+- derived_loan_product_type
+- construction_method
 
-Metrics used:
-- Adverse Impact Ratio (AIR)
-- Marginal Effect (ME)
-- Standardized Mean Difference (SMD)
+Protected attributes used for auditing:
+- derived_race
+- derived_ethnicity
+- derived_sex
+- race × sex intersection groups
 
 ---
 
-## Explainability
-The notebook uses SHAP analysis to identify important features and potential proxy discrimination risks. Important proxy-related features such as loan purpose and loan type were reviewed during the audit.
+## Responsible ML Analysis
+
+### Explainability
+The project uses:
+- SHAP
+- LIME
+- Feature importance analysis
+
+These methods help identify:
+- key approval/denial drivers
+- proxy features
+- subgroup-specific model behavior
+
+---
+
+### Fairness Metrics
+
+The following fairness metrics were evaluated:
+
+- AIR (Adverse Impact Ratio)
+- ME (Marginal Effect)
+- SMD (Standardized Mean Difference)
+
+Reference groups:
+- Race → White
+- Sex → Male
+- Ethnicity → Not Hispanic or Latino
+- Intersectional → White | Male
 
 ---
 
 ## Key Findings
-- Gradient Boosting achieved better predictive performance overall.
-- However, the Gradient Boosting model also showed stronger subgroup disparities.
-- Black female applicants under the GBT model had an AIR below the four-fifths threshold (0.7913), raising fairness concerns.
-- The project demonstrates that the model with the highest AUC is not always the most deployable or defensible model.
+
+### Model Performance
+GBT achieved stronger predictive performance than Logistic Regression, but also produced larger subgroup disparities.
+
+### Fairness Concerns
+The strongest adverse-impact signal appeared in the intersectional race × sex analysis:
+
+| Group | AIR |
+|---|---|
+| Black or African American \| Female | 0.7913 |
+| American Indian or Alaska Native \| Male | 0.7944 |
+
+These values fall below the four-fifths-rule threshold (0.80).
 
 ---
 
 ## Bias Mitigation
-Two mitigation policies were evaluated:
-- Global threshold adjustment
-- Group-specific threshold analysis
 
-The project concludes that fairness improvements must still satisfy governance and legal defensibility requirements before deployment.
+A post-processing threshold mitigation strategy was applied.
+
+### Global Threshold Adjustment
+A threshold sweep identified:
+
+- Best threshold = 0.46
+
+After mitigation:
+
+| Group | AIR Before | AIR After |
+|---|---|---|
+| Black Female | 0.7913 | 0.8011 |
+| AIAN Male | 0.7944 | 0.8312 |
+
+This improved fairness while preserving a single global decision rule.
+
+---
+
+## Residual Risks
+
+Even after mitigation, several risks remain:
+
+- Temporal drift
+- FPR/FNR disparity across groups
+- Proxy-feature effects
+- Missing-data sensitivity
+- Threshold sensitivity
+- Out-of-distribution loan products
+
+The project concludes that fairness risks were reduced, but not fully eliminated.
 
 ---
 
 ## Technologies Used
+
 - Python
 - Pandas
 - NumPy
 - Scikit-learn
 - Matplotlib
 - SHAP
-- Google Colab
+- LIME
+- Jupyter Notebook
 
-
-## Conclusion
-This project demonstrates how responsible machine learning extends beyond model accuracy. A model must also be explainable, fair across subgroups, robust to failure modes, and defensible for real-world deployment decisions.
 
 
