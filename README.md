@@ -1,6 +1,6 @@
 # Responsible Machine Learning Capstone Project
 
-2026 Spring — DNSC 6330 Responsible Machine Learning  
+DNSC 6330-11 Responsible Machine Learning  
 George Washington University
 
 Team Members:
